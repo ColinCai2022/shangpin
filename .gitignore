@@ -1,0 +1,15 @@
+# Python
+__pycache__/
+*.pyc
+
+# Virtualenv
+venv/
+
+# Database
+*.db
+
+# IDE
+.idea/
+
+# Config
+.env
