@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+{% block title %}商品列表 - 商品管理系统{% endblock %}
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+    <div>
+        <h4 class="page-title mb-1">商品列表</h4>
+        <div class="text-muted small">
+            已加载 {{ products|length }} 条，本页 / 共 {{ pagination.total }} 条记录
+        </div>
+    </div>
+    <form class="d-flex gap-2" method="get">
+        <input class="form-control search-input" type="search" name="q"
+               placeholder="按型号或 SKU 搜索" value="{{ keyword }}">
+        <button class="btn btn-soft-primary btn-soft" type="submit">搜索</button>
+    </form>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-hover align-middle">
+        <thead class="table-light">
+        <tr>
+            <th><span class="table-header-chip"># ID</span></th>
+            <th>型号</th>
+            <th>SKU</th>
+            <th>尺寸（包/外/内）</th>
+            <th>重量（毛/净）</th>
+            <th>温度范围</th>
+            <th>功率 / 耗电</th>
+            <th>压缩机 & 管路</th>
+            <th>能耗等级</th>
+            <th>图片</th>
+            {% if g.current_user and g.current_user.is_admin %}
+                <th class="text-end">操作</th>
+            {% endif %}
+        </tr>
+        </thead>
+        <tbody>
+        {% for p in products %}
+            <tr>
+                <td class="text-muted small">{{ p.id }}</td>
+                <td>
+                    <div class="fw-semibold">{{ p.model }}</div>
+                    {% if p.temperature_range %}
+                        <div class="small text-muted">温度：{{ p.temperature_range }}</div>
+                    {% endif %}
+                </td>
+                <td>
+                    <span class="badge bg-light text-dark border small">{{ p.sku or '-' }}</span>
+                </td>
+                <td class="small">
+                    <div>包：{{ p.package_size or '-' }}</div>
+                    <div>外：{{ p.outer_size or '-' }}</div>
+                    <div>内：{{ p.inner_size or '-' }}</div>
+                </td>
+                <td class="small">
+                    <div>毛：{{ p.gross_weight or '-' }}</div>
+                    <div>净：{{ p.net_weight or '-' }}</div>
+                </td>
+                <td class="small">{{ p.temperature_range or '-' }}</td>
+                <td class="small">
+                    <div>功率：{{ p.power or '-' }}</div>
+                    <div>耗电：{{ p.power_consumption or '-' }}</div>
+                </td>
+                <td class="small">
+                    <div>{{ p.compressor_brand or '-' }}</div>
+                    <div class="text-muted">{{ p.cooling_pipe_material or '' }}</div>
+                </td>
+                <td>
+                    {% if p.energy_level %}
+                        <span class="badge bg-success-subtle text-success-emphasis border small">
+                            {{ p.energy_level }}
+                        </span>
+                    {% else %}
+                        <span class="text-muted small">未标记</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if p.image_real or p.image_param %}
+                        {% if p.image_real %}
+                            <a class="badge bg-primary-subtle text-primary-emphasis border text-decoration-none small"
+                               href="{{ url_for('products.uploaded_file', filename=p.image_real) }}"
+                               target="_blank">实物</a>
+                        {% endif %}
+                        {% if p.image_param %}
+                            <a class="badge bg-info-subtle text-info-emphasis border text-decoration-none small ms-1"
+                               href="{{ url_for('products.uploaded_file', filename=p.image_param) }}"
+                               target="_blank">参数</a>
+                        {% endif %}
+                    {% else %}
+                        <span class="text-muted small">无</span>
+                    {% endif %}
+                </td>
+                {% if g.current_user and g.current_user.is_admin %}
+                    <td class="text-end">
+                        <a class="btn btn-sm btn-soft-primary btn-soft"
+                           href="{{ url_for('products.edit_product', product_id=p.id) }}">编辑</a>
+                        <form method="post"
+                              action="{{ url_for('products.delete_product', product_id=p.id) }}"
+                              class="d-inline"
+                              onsubmit="return confirm('确认删除该商品？');">
+                            <button type="submit" class="btn btn-sm btn-soft-danger btn-soft ms-1">删除</button>
+                        </form>
+                    </td>
+                {% endif %}
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% if pagination.pages > 1 %}
+    <nav aria-label="Page navigation" class="mt-3">
+        <ul class="pagination pagination-sm mb-0">
+            <li class="page-item {% if not pagination.has_prev %}disabled{% endif %}">
+                <a class="page-link"
+                   href="{{ url_for('products.list_products', page=pagination.prev_num, q=keyword) }}">上一页</a>
+            </li>
+            {% for p in pagination.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+                {% if p %}
+                    <li class="page-item {% if p == pagination.page %}active{% endif %}">
+                        <a class="page-link"
+                           href="{{ url_for('products.list_products', page=p, q=keyword) }}">{{ p }}</a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled"><span class="page-link">…</span></li>
+                {% endif %}
+            {% endfor %}
+            <li class="page-item {% if not pagination.has_next %}disabled{% endif %}">
+                <a class="page-link"
+                   href="{{ url_for('products.list_products', page=pagination.next_num, q=keyword) }}">下一页</a>
+            </li>
+        </ul>
+    </nav>
+{% endif %}
+
+{% endblock %}
+

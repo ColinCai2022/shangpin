@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}注册 - 商品管理系统{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-4">
+        <div class="card auth-card">
+            <div class="card-header">
+                <h3 class="mb-1 text-center">创建账号</h3>
+                <p class="mb-0 text-center small opacity-75">首次注册的账号将自动成为管理员</p>
+            </div>
+            <div class="card-body p-4">
+                <form method="post">
+                    <div class="mb-3">
+                        <label class="form-label">用户名</label>
+                        <input type="text" name="username" class="form-control" required placeholder="请输入用户名">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">密码</label>
+                        <input type="password" name="password" class="form-control" required placeholder="至少 6 位密码">
+                    </div>
+                    <!-- 只有第一个注册的用户会自动成为管理员，后面的默认普通用户，这里的选择只是预留 -->
+                    <div class="mb-2">
+                        <label class="form-label">角色（可选，仅用于标记显示）</label>
+                        <select name="role" class="form-select">
+                            <option value="user">普通用户（仅查询）</option>
+                            <option value="admin">管理员（如被允许）</option>
+                        </select>
+                    </div>
+                    <div class="d-grid gap-2 mt-3">
+                        <button type="submit" class="btn btn-primary">注册</button>
+                    </div>
+                </form>
+            </div>
+            <div class="card-footer text-center bg-transparent border-0 pb-3">
+                <span class="text-muted small">已有账号？</span>
+                <a class="pill-link" href="{{ url_for('auth.login') }}">去登录</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

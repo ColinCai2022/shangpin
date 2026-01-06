@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+{% block title %}{{ '编辑' if product else '新增' }}商品 - 商品管理系统{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+            <div>
+                <h4 class="page-title mb-1">{{ '编辑商品' if product else '新增商品' }}</h4>
+                <div class="text-muted small">
+                    请尽量填写完整参数，便于后续检索和对比
+                </div>
+            </div>
+            <a href="{{ url_for('products.list_products') }}" class="btn btn-outline-secondary btn-sm">
+                返回列表
+            </a>
+        </div>
+
+        <form method="post" enctype="multipart/form-data">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">型号 <span class="text-danger">*</span></label>
+                    <input type="text" name="model" class="form-control" required
+                           value="{{ product.model if product else '' }}" placeholder="例如：SP-XXX-123">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">SKU</label>
+                    <input type="text" name="sku" class="form-control"
+                           value="{{ product.sku if product else '' }}" placeholder="可填写内部物料编码等">
+                </div>
+
+                <div class="col-12 mt-2 mb-1">
+                    <div class="small text-muted">尺寸信息</div>
+                    <hr class="mt-1 mb-2">
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">包装尺寸</label>
+                    <input type="text" name="package_size" class="form-control"
+                           value="{{ product.package_size if product else '' }}" placeholder="如：600×500×450mm">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">外形尺寸</label>
+                    <input type="text" name="outer_size" class="form-control"
+                           value="{{ product.outer_size if product else '' }}">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">内部尺寸</label>
+                    <input type="text" name="inner_size" class="form-control"
+                           value="{{ product.inner_size if product else '' }}">
+                </div>
+
+                <div class="col-12 mt-2 mb-1">
+                    <div class="small text-muted">重量与性能</div>
+                    <hr class="mt-1 mb-2">
+                </div>
+
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">毛重</label>
+                    <input type="text" name="gross_weight" class="form-control"
+                           value="{{ product.gross_weight if product else '' }}" placeholder="如：80kg">
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">净重</label>
+                    <input type="text" name="net_weight" class="form-control"
+                           value="{{ product.net_weight if product else '' }}">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">温度范围</label>
+                    <input type="text" name="temperature_range" class="form-control"
+                           value="{{ product.temperature_range if product else '' }}" placeholder="如：2℃ ~ 8℃">
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">功率</label>
+                    <input type="text" name="power" class="form-control"
+                           value="{{ product.power if product else '' }}" placeholder="如：150W">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">耗电量</label>
+                    <input type="text" name="power_consumption" class="form-control"
+                           value="{{ product.power_consumption if product else '' }}" placeholder="如：0.8kWh/24h">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">能耗等级</label>
+                    <input type="text" name="energy_level" class="form-control"
+                           value="{{ product.energy_level if product else '' }}" placeholder="如：1级 / A++ 等">
+                </div>
+
+                <div class="col-12 mt-2 mb-1">
+                    <div class="small text-muted">制冷系统</div>
+                    <hr class="mt-1 mb-2">
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">压缩机品牌</label>
+                    <input type="text" name="compressor_brand" class="form-control"
+                           value="{{ product.compressor_brand if product else '' }}">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">制冷管路材质</label>
+                    <input type="text" name="cooling_pipe_material" class="form-control"
+                           value="{{ product.cooling_pipe_material if product else '' }}">
+                </div>
+
+                <div class="col-12 mt-2 mb-1">
+                    <div class="small text-muted">图片</div>
+                    <hr class="mt-1 mb-2">
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">产品实物图</label>
+                    {% if product and product.image_real %}
+                        <div class="mb-1 small">
+                            当前：
+                            <a href="{{ url_for('products.uploaded_file', filename=product.image_real) }}"
+                               target="_blank">查看实物图</a>
+                        </div>
+                    {% endif %}
+                    <input type="file" name="image_real" class="form-control" accept="image/*">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">参数图</label>
+                    {% if product and product.image_param %}
+                        <div class="mb-1 small">
+                            当前：
+                            <a href="{{ url_for('products.uploaded_file', filename=product.image_param) }}"
+                               target="_blank">查看参数图</a>
+                        </div>
+                    {% endif %}
+                    <input type="file" name="image_param" class="form-control" accept="image/*">
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-between mt-3">
+                <a href="{{ url_for('products.list_products') }}" class="btn btn-outline-secondary">取消</a>
+                <button type="submit" class="btn btn-primary">保存</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
